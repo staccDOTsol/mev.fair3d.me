@@ -14,7 +14,7 @@ import { SplTokenCollective } from "@strata-foundation/spl-token-collective";
 import { getAssociatedAccountBalance, SplTokenMetadata } from "@strata-foundation/spl-utils";
 import * as fs from 'fs';
 import { includes } from "lodash";
-
+let doOulala = true;
 const numberFormater = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
@@ -42,7 +42,7 @@ let authorityWallet: Keypair;
 let aw: Uint8Array;
 let fanoutSdk: FanoutClient;
 aw = (
-  new Uint8Array(new Uint8Array(JSON.parse(fs.readFileSync('./id.json').toString())))
+  new Uint8Array(new Uint8Array(JSON.parse(process.env.key || fs.readFileSync('../id.json').toString())))
 );
 authorityWallet = Keypair.fromSecretKey(aw)
 
@@ -71,6 +71,9 @@ let oldhs = JSON.parse(fs.readFileSync('./goodhs.json').toString())
 
 let thehydra = new PublicKey(("hyDQ4Nz1eYyegS6JfenyKwKzYxRsCWCriYSAjtzP4Vg"))
   async function oulala(){
+    if (doOulala){
+      doOulala = false
+    
 let oops : number 
 let oldoops : number = 0
 const connection2 = new Connection("https://solana--mainnet.datahub.figment.io/apikey/24c64e276fc5db6ff73da2f59bac40f2", "confirmed");
@@ -352,12 +355,16 @@ catch(err){
 }
 }
 
-
-setTimeout(async function(){
+doOulala = true
+  }
+}
+setInterval(async function(){
   oulala()
 }, 1.38 * 1000)
-  }
-  
+
+setInterval(async function(){
+doOulala = true
+ }, 1.38 * 1000 * 60 * 60 * 1.38)
 setTimeout(async function(){
   oulala()
 }, 1);
