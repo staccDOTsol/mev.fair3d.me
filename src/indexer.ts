@@ -19,7 +19,7 @@ const numberFormater = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
-
+let tasties = []
 export const formatNumber = {
   format: (val?: number) => {
     if (!val) {
@@ -36,7 +36,7 @@ export const formatNumber = {
     return val.toNumber() ;
   },
 };
-const connection = new Connection("https://solana--mainnet.datahub.figment.io/apikey/24c64e276fc5db6ff73da2f59bac40f2", "confirmed");
+const connection =  new Connection("https://rpc.theindex.io/mainnet-beta/4ae962ec-5c8c-4071-9ef2-e5c6b59bdf3e", "recent");//new Connection("https://solana--mainnet.datahub.figment.io/apikey/24c64e276fc5db6ff73da2f59bac40f2", "recent");
 let authorityWallet: Keypair;
 let aw: Uint8Array;
 let fanoutSdk: FanoutClient;
@@ -53,16 +53,19 @@ async function oulala(){
     doOulala = false
 let oops : number 
 let oldoops : number = -1
-const connection = new Connection("https://solana--mainnet.datahub.figment.io/apikey/24c64e276fc5db6ff73da2f59bac40f2", "confirmed");
-const connection2 = new Connection("https://ssc-dao.genesysgo.net/", "confirmed");
+const connection =  new Connection("https://rpc.theindex.io/mainnet-beta/4ae962ec-5c8c-4071-9ef2-e5c6b59bdf3e", "recent");//new Connection("https://solana--mainnet.datahub.figment.io/apikey/24c64e276fc5db6ff73da2f59bac40f2", "recent");
+const connection2 = connection// = new Connection("https://rpc.theindex.io/mainnet-beta/4ae962ec-5c8c-4071-9ef2-e5c6b59bdf3e", "recent");
 
 
+let inflows = JSON.parse(fs.readFileSync('./recordInflow.json').toString())
+//console.log(inflows)
 let goodhs = JSON.parse(fs.readFileSync('./goodhs.json').toString())
   const hydras = await connection2.getProgramAccounts(
        thehydra as PublicKey,
       {}
     );
-    let rl = (30000000*12)/365/24/60/60/1000
+    let haha = 0;
+    let rl = (950000*12)/365/24/60/60/1000
     rl = 1 / rl
     let ms = rl //* 10
     console.log(hydras.length)
@@ -75,7 +78,6 @@ fanoutSdk = new FanoutClient(
 ); 
     let index = 0
     let start = new Date().getTime()
-
     await PromisePool.withConcurrency(500)
     .for(hydras)
     // @ts-ignore
@@ -91,13 +93,50 @@ fanoutSdk = new FanoutClient(
     .process(async tasty => {
 
    // console.log(tasty.pubkey.toBase58())
-  
+  let fo
     try{
-    const fo = await fanoutSdk.fetch<Fanout>(
+     fo = await fanoutSdk.fetch<Fanout>(
      ( tasty.pubkey) as PublicKey,
       Fanout
     );
-    if ( /*
+
+  } catch(err){
+    // @ts-ignore
+          if (err.toString().indexOf('ERR_BUFFER') == -1 && err.toString().indexOf('ERR_ASSERT') == -1){
+          console.log(err)
+          }
+        index ++
+        oops = (Math.floor(index / hydras.length * 100) ) 
+       // console.log(oops)
+        if (oops % 5 == 0 && oldoops != oops){
+     
+     oldoops = oops
+     await sleep(ms)
+     console.log(oops + '%: ' + index + '; elapsed: ' + ((new Date().getTime() - start ) / 1000) + 's')
+     if (oops > 100){
+       console.log(haha)
+     }
+        }
+        }    
+           const [holdingAccount, holdingAccountBumpSeed] =
+        await FanoutClient.nativeAccount(new PublicKey(tasty.pubkey));
+  
+        const fortheculture_andoutstandingcontributinostothetech = await connection.getBalance ( (holdingAccount))
+        const ftc = fortheculture_andoutstandingcontributinostothetech;
+        if (fo?.membershipMint && (ftc / 10 ** 9) > 0.00195576){
+         //   if (      fo.membershipMint.toBase58() == "8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh"  ){ 
+          console.log((ftc / 10 ** 9))
+        //console.log((ftc / 10 ** 9).toString())
+      haha+=(ftc / 10 ** 9);  //367 snapshot wallies at risk lol #seemstasty .. oops I lie, 1 second
+      console.log(tasty.pubkey.toBase58())
+      console.log(fo.membershipMint.toBase58()) // wat
+      console.log(haha)
+         //   }
+     // tasties.push(fo.membershipMint.toBase58())
+      
+      }
+/*
+    if ( 
      !fo.name.toLowerCase().includes('fair')
       && !fo.name.toLowerCase().includes('test')
       && !fo.name.toLowerCase().includes('cope')
@@ -105,7 +144,7 @@ fanoutSdk = new FanoutClient(
       && !fo.name.toLowerCase().includes('jare')
       && !fo.name.toLowerCase().includes('free')
       && 
-      */fo.membershipMint){
+      ){
   
     var quote: any = null
 
@@ -117,28 +156,17 @@ fanoutSdk = new FanoutClient(
       if (balance.value.uiAmount >= 0){
           if (!goodhs.includes(tasty.pubkey.toBase58())){
         goodhs.push(tasty.pubkey.toBase58())
-          }
         console.log(goodhs.length)
-        fs.writeFileSync('./goodhs.json', JSON.stringify(goodhs))
+        console.log(fo.name.toLowerCase() + ' is ' + tasty.pubkey.toBase58() + ': ' + balance.value.uiAmountString)
+        
+          }
+       fs.writeFileSync('./goodhs.json', JSON.stringify(goodhs))
 
 
       }
     }
-  }
-}
-    } catch(err){
-      
-    index ++
-    oops = (Math.floor(index / hydras.length * 100) ) 
-   // console.log(oops)
-    if (oops % 5 == 0 && oldoops != oops){
- 
- oldoops = oops
- await sleep(ms)
- console.log(oops + '%: ' + index + '; elapsed: ' + ((new Date().getTime() - start ) / 1000) + 's')
- 
-    }
-    }
+  } */ 
+//}
 
     index ++
    oops = (Math.floor(index / hydras.length * 100) ) 
